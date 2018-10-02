@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Assignment 2: Distinct Elements,
 Approximating the number of distinct elements in a stream.
@@ -21,25 +22,7 @@ Running multiple experiments, establish/verify the trade-offs;
 
 """
 
-
-## FM
-## h = hash
-## bit(y, k) = binary representation 
-## R = largest index with bitmap val 1
-## 2**R = estimate 
-
-#for i in items:
-#  bitmap[i] = 0
-#for b in buckets:
-#  index = p(h(x))
-#  if bitmap[index] == 0:
-#    bitmap[index] == 1
-
-
-## DF
-## http://algo.inria.fr/flajolet/Publications/DuFl03-LNCS.pdf
-
-#import numpy as np
+import numpy as np
 import random
 
 
@@ -52,7 +35,46 @@ def trailing_zeroes(num):
     p += 1
   return p
 
-def estimate_cardinality(values, k):
+
+## FM
+## http://algo.inria.fr/flajolet/Publications/FlMa85.pdf
+## https://www.cms.waikato.ac.nz/~abifet/book/chapter_4.html
+
+## h = hash
+## bit(y, k) = binary representation 
+## p = position of the least significant 1-bit in the binary representation of v
+## R = largest index with bitmap val 1
+## f = correction factor 0.77351
+## 2**R = estimate 
+
+#for v in values:
+#  bitmap[v] = 0
+#for v in values:
+#  index = p(h(v))
+#  if bitmap[index] == 0:
+#    bitmap[index] == 1
+
+def estimate_cardinality_FM(values):
+  """Estimates the number of unique elements in the input set values.
+
+  Arguments:
+    values: An iterator of hashable elements to estimate the cardinality of.
+  """
+  logvalues = np.log(values)
+  for v in logvalues:
+    h = hash(v)
+    trailing = trailing_zeroes(h)
+  return 2 ** trailing / 0.77351
+
+result_FM = [100000/estimate_cardinality_FM([random.getrandbits(32) for i in range(100000)]) for j in range(10)]
+print(result_FM)
+
+
+## DF (LogLog)
+## http://algo.inria.fr/flajolet/Publications/DuFl03-LNCS.pdf
+## http://blog.notdot.net/2012/09/Dam-Cool-Algorithms-Cardinality-Estimation
+
+def estimate_cardinality_DF(values, k):
   """Estimates the number of unique elements in the input set values.
 
   Arguments:
@@ -61,13 +83,13 @@ def estimate_cardinality(values, k):
   """
   num_buckets = 2 ** k
   max_zeroes = [0] * num_buckets
-  for value in values:
-    h = hash(value)
+  for v in values:
+    h = hash(v)
     bucket = h & (num_buckets - 1) # Mask out the k least significant bits as bucket ID
     bucket_hash = h >> k
     max_zeroes[bucket] = max(max_zeroes[bucket], trailing_zeroes(bucket_hash))
   return 2 ** (float(sum(max_zeroes)) / num_buckets) * num_buckets * 0.79402
 
 
-result = [100000/estimate_cardinality([random.random() for i in range(100000)], 10) for j in range(10)]
-print(result)
+result_DF = [100000/estimate_cardinality_DF([random.getrandbits(32) for i in range(100000)], 10) for j in range(10)]
+print(result_DF)
