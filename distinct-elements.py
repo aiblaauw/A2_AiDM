@@ -39,6 +39,7 @@ def trailing_zeroes(num):
 ## FM
 ## http://algo.inria.fr/flajolet/Publications/FlMa85.pdf
 ## https://www.cms.waikato.ac.nz/~abifet/book/chapter_4.html
+## https://ravi-bhide.blogspot.com/2011/04/flajolet-martin-algorithm.html
 
 ## h = hash
 ## bit(y, k) = binary representation 
