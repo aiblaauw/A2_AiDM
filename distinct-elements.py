@@ -3,23 +3,19 @@
 """
 Assignment 2: Distinct Elements,
 Approximating the number of distinct elements in a stream.
-
 Testing two distinct/element estimation techniques;
 - Flajolet-Martin
 - Durand-Flajolet (LogLog Counting)
  
-
 Accuracy was evaluated by;
 - Expected count of elements / buckets
 - Number of distinct elements in the stream
 - Required memory (number of bytes)
 - Relative Approximation Error metric 
-
 Running multiple experiments, establish/verify the trade-offs;
 - For various numbers of distinct elements
 - number of buckets
 - number of setups 
-
 """
 
 import numpy as np
@@ -57,14 +53,20 @@ def trailing_zeroes(num):
 
 def estimate_cardinality_FM(values):
   """Estimates the number of unique elements in the input set values.
-
   Arguments:
     values: An iterator of hashable elements to estimate the cardinality of.
   """
-  logvalues = np.log(values)
-  for v in logvalues:
-    h = hash(v)
-    trailing = trailing_zeroes(h)
+  
+  bitvector = np.zeros(32)
+  
+  for v in values:
+      #bitvalue = hash(v)
+      trailing = trailing_zeroes(v)
+      bitvector[trailing] = 1
+  print(bitvector)
+  for index, bit in enumerate(bitvector):
+      if bit == 0:
+          return 2 ** index / 0.77351
   return 2 ** trailing / 0.77351
 
 result_FM = [100000/estimate_cardinality_FM([random.getrandbits(32) for i in range(100000)]) for j in range(10)]
@@ -77,7 +79,6 @@ print(result_FM)
 
 def estimate_cardinality_DF(values, k):
   """Estimates the number of unique elements in the input set values.
-
   Arguments:
     values: An iterator of hashable elements to estimate the cardinality of.
     k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.
@@ -94,3 +95,7 @@ def estimate_cardinality_DF(values, k):
 
 result_DF = [100000/estimate_cardinality_DF([random.getrandbits(32) for i in range(100000)], 10) for j in range(10)]
 print(result_DF)
+
+test = np.zeros(60)
+for index, item in enumerate(test):
+    print(index)
