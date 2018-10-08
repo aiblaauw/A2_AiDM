@@ -10,6 +10,7 @@ Accuracy was evaluated by;
 - Number of distinct elements in the stream
 - Required memory (number of bytes)
 - Relative Approximation Error metric 
+
 Running multiple experiments, establish/verify the trade-offs;
 - For various numbers of distinct elements
 - number of buckets
