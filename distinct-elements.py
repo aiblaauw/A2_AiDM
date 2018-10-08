@@ -21,6 +21,11 @@ Running multiple experiments, establish/verify the trade-offs;
 import numpy as np
 import random
 
+random.seed(42)
+
+num_elements = 100000
+num_bits = 10
+
 
 def trailing_zeroes(num):
   """Counts the number of trailing 0 bits in num."""
@@ -54,10 +59,10 @@ def estimate_cardinality_FM(values):
           return 2 ** index / correction_factor_FM
   return 2 ** trailing / correction_factor_FM
 
-predictions_FM = [estimate_cardinality_FM([random.getrandbits(32) for i in range(100000)]) for j in range(10)]
+predictions_FM = [estimate_cardinality_FM([random.getrandbits(32) for i in range(num_elements)]) for j in range(10)]
 predictions_FM = np.array(predictions_FM)
 # True unique element value very close to number of random values 
-RAE_FM = np.abs(100000 - predictions_FM)/100000
+RAE_FM = np.abs(num_elements - predictions_FM)/num_elements
 
 print("RAE_FM:", RAE_FM)
 
@@ -91,10 +96,10 @@ def estimate_cardinality_DF(values, k):
   return cardinality
 
 
-predictions_DF = [estimate_cardinality_DF([random.getrandbits(32) for i in range(100000)], 10) for j in range(10)]
+predictions_DF = [estimate_cardinality_DF([random.getrandbits(32) for i in range(num_elements)], num_bits) for j in range(10)]
 predictions_DF = np.array(predictions_DF)
 # True unique element value very close to number of random values 
-RAE_DF = np.abs(100000 - predictions_DF)/100000
+RAE_DF = np.abs(num_elements - predictions_DF)/num_elements
 
 print("\nRAE_DF:", RAE_DF)
 
