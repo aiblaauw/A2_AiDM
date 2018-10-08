@@ -37,40 +37,37 @@ def trailing_zeroes(num):
 ## https://www.cms.waikato.ac.nz/~abifet/book/chapter_4.html
 ## https://ravi-bhide.blogspot.com/2011/04/flajolet-martin-algorithm.html
 
-## h = hash
-## bit(y, k) = binary representation 
-## p = position of the least significant 1-bit in the binary representation of v
-## R = largest index with bitmap val 1
-## f = correction factor 0.77351
-## 2**R = estimate 
-
-#for v in values:
-#  bitmap[v] = 0
-#for v in values:
-#  index = p(h(v))
-#  if bitmap[index] == 0:
-#    bitmap[index] == 1
-
 def estimate_cardinality_FM(values):
   """Estimates the number of unique elements in the input set values.
   Arguments:
     values: An iterator of hashable elements to estimate the cardinality of.
   """
   
+  correction_factor_FM = 0.77351
   bitvector = np.zeros(32)
   
   for v in values:
-      #bitvalue = hash(v)
       trailing = trailing_zeroes(v)
       bitvector[trailing] = 1
-  print(bitvector)
+  #print(bitvector)
   for index, bit in enumerate(bitvector):
       if bit == 0:
-          return 2 ** index / 0.77351
-  return 2 ** trailing / 0.77351
+          return 2 ** index / correction_factor_FM
+  return 2 ** trailing / correction_factor_FM
 
-result_FM = [100000/estimate_cardinality_FM([random.getrandbits(32) for i in range(100000)]) for j in range(10)]
-print(result_FM)
+predictions_FM = [estimate_cardinality_FM([random.getrandbits(32) for i in range(100000)]) for j in range(10)]
+predictions_FM = np.array(predictions_FM)
+# True unique element value very close to number of random values 
+RAE_FM = np.abs(100000 - predictions_FM)/100000
+
+print("RAE_FM:", RAE_FM)
+
+# Partition your hash functions into several groups
+# Calculate the average of each group
+# Then take the median of the averages
+
+
+###
 
 
 ## DF (LogLog)
@@ -83,19 +80,31 @@ def estimate_cardinality_DF(values, k):
     values: An iterator of hashable elements to estimate the cardinality of.
     k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.
   """
+  
+  correction_factor_DF = 0.79402
   num_buckets = 2 ** k
-  max_zeroes = [0] * num_buckets
+  max_zeroes = [0] * num_buckets # Initialize, all zeroes
+  
   for v in values:
     h = hash(v)
     bucket = h & (num_buckets - 1) # Mask out the k least significant bits as bucket ID
-    bucket_hash = h >> k
+    bucket_hash = h >> k # Returns h with the bits shifted to the right by k places,
+    # 
     max_zeroes[bucket] = max(max_zeroes[bucket], trailing_zeroes(bucket_hash))
-  return 2 ** (float(sum(max_zeroes)) / num_buckets) * num_buckets * 0.79402
+    # If trailing zeroes from bucket hash > max zeroes; update
+  
+  cardinality = correction_factor_DF * num_buckets * ( 2 ** np.mean(max_zeroes) )  
+  return cardinality
 
 
-result_DF = [100000/estimate_cardinality_DF([random.getrandbits(32) for i in range(100000)], 10) for j in range(10)]
-print(result_DF)
+predictions_DF = [estimate_cardinality_DF([random.getrandbits(32) for i in range(100000)], 10) for j in range(10)]
+predictions_DF = np.array(predictions_DF)
+# True unique element value very close to number of random values 
+RAE_DF = np.abs(100000 - predictions_DF)/100000
 
-test = np.zeros(60)
-for index, item in enumerate(test):
-    print(index)
+print("\nRAE_DF:", RAE_DF)
+
+
+#test = np.zeros(60)
+#for index, item in enumerate(test):
+#    print(index)
