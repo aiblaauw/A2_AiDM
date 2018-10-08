@@ -86,9 +86,8 @@ def estimate_cardinality_DF(values, k):
   max_zeroes = [0] * num_buckets # Initialize, all zeroes
   
   for v in values:
-    h = hash(v)
-    bucket = h & (num_buckets - 1) # Mask out the k least significant bits as bucket ID
-    bucket_hash = h >> k # Returns h with the bits shifted to the right by k places,
+    bucket = v & (num_buckets - 1) # Mask out the k least significant bits as bucket ID
+    bucket_hash = v >> k # Returns h with the bits shifted to the right by k places,
     # 
     max_zeroes[bucket] = max(max_zeroes[bucket], trailing_zeroes(bucket_hash))
     # If trailing zeroes from bucket hash > max zeroes; update
