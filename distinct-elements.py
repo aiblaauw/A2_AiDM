@@ -49,7 +49,6 @@ def estimate_cardinality_FM(values):
   for v in values:
       trailing = trailing_zeroes(v)
       bitvector[trailing] = 1
-  #print(bitvector)
   for index, bit in enumerate(bitvector):
       if bit == 0:
           return 2 ** index / correction_factor_FM
@@ -61,10 +60,6 @@ predictions_FM = np.array(predictions_FM)
 RAE_FM = np.abs(100000 - predictions_FM)/100000
 
 print("RAE_FM:", RAE_FM)
-
-# Partition your hash functions into several groups
-# Calculate the average of each group
-# Then take the median of the averages
 
 
 ###
@@ -103,7 +98,3 @@ RAE_DF = np.abs(100000 - predictions_DF)/100000
 
 print("\nRAE_DF:", RAE_DF)
 
-
-#test = np.zeros(60)
-#for index, item in enumerate(test):
-#    print(index)
