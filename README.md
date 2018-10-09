@@ -20,6 +20,8 @@ Running multiple experiments, establish/verify the trade-offs;
 
 Edit variables;
 - Number of elements 
-- Number of bits (used to determine number of buckets and memory)
+- Number of bits (used to determine number of buckets and memory usage)
 
-RAE given as output
+RAE given as output for FM algorithm and DF algorithm for 10 runs,\
+using mean and median as values to report.
+
